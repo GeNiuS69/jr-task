@@ -40,7 +40,9 @@ RSpec.describe 'Api::Posts' do
         end
 
         it 'creates new user' do
-          expect { post('/api/posts', params: post_params) }.to change(User, :count)
+          expect {
+            post('/api/posts', params: post_params)
+          }.to change(User, :count)
         end
       end
     end
@@ -89,7 +91,9 @@ RSpec.describe 'Api::Posts' do
 
     context 'when user didn\'t rate yet' do
       it 'increases ratings count' do
-        expect { post("/api/posts/#{my_post.id}/rate", params: rating_params) }.to change(Rating, :count)
+        expect {
+          post("/api/posts/#{my_post.id}/rate", params: rating_params)
+        }.to change(Rating, :count)
       end
     end
 
@@ -99,7 +103,9 @@ RSpec.describe 'Api::Posts' do
       end
 
       it 'didn\'t change ratings count' do
-        expect { post("/api/posts/#{my_post.id}/rate", params: rating_params) }.not_to change(Rating, :count)
+        expect {
+          post("/api/posts/#{my_post.id}/rate", params: rating_params)
+        }.not_to change(Rating, :count)
       end
     end
   end
