@@ -56,3 +56,4 @@ group :development do
 end
 
 gem 'jetrockets-standard'
+gem 'rest-client', require: false

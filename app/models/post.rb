@@ -18,12 +18,13 @@ class Post < ApplicationRecord
 
   validates :title, :body, :ip, presence: true
 
-  def self.top(n = 3)
-    select('posts.*, AVG(ratings.value) AS rating')
+  def self.top(limit = nil)
+    limit ||= 3
+    select('posts.*, coalesce(AVG(ratings.value), 0) AS rating')
       .joins('LEFT JOIN ratings ON posts.id = ratings.post_id')
       .group('posts.id')
       .order('rating DESC')
-      .limit(n)
+      .limit(limit)
   end
 
   def self.ips

@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 class Api::PostsController < ApplicationController
+  wrap_parameters false
+
   def create
     user = User.find_or_create_by(user_params)
     return render json: { errors: user.errors.full_messages }, status: :unprocessable_entity unless user.persisted?
@@ -32,14 +34,14 @@ class Api::PostsController < ApplicationController
   private
 
   def user_params
-    params.permit(%i[login])
+    params.slice(*%i[login]).permit(%i[login])
   end
 
   def post_params
-    params.permit(%i[title body ip])
+    params.slice(*%i[title body ip]).permit(%i[title body ip])
   end
 
   def rate_params
-    params.permit(%i[post_id user_id value])
+    params.slice(*%i[post_id user_id value]).permit(%i[post_id user_id value])
   end
 end
