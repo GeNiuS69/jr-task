@@ -47,16 +47,31 @@ RSpec.describe 'Api::Posts' do
 
     context 'when fail' do
       context 'when login params is absence' do
-        it 'returns 422 code' do
+        before do
           post '/api/posts', params: {}
+        end
+
+        it 'returns 422 code' do
           expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'has errors in response' do
+          expect(response.parsed_body.keys).to include('errors')
         end
       end
 
       context 'when login params is present' do
+        before do
+          post '/api/posts', params: {}
+        end
+
         it 'returns 422 code' do
           post '/api/posts', params: { login: 'login' }
           expect(response).to have_http_status(:unprocessable_entity)
+        end
+
+        it 'has errors in response' do
+          expect(response.parsed_body.keys).to include('errors')
         end
       end
     end
