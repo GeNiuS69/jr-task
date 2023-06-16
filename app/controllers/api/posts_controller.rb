@@ -2,12 +2,14 @@
 
 class Api::PostsController < ApplicationController
   def create
-    user = User.find_or_create_by(params[:login])
+    user = User.find_or_create_by(user_params)
+    return render json: { errors: user.errors.full_messages }, status: :unprocessable_entity unless user.persisted?
+
     post = user.posts.create(post_params)
     if post.errors.any?
-      render json: post.errors.full_messages
+      render json: { errors: post.errors.full_messages }, status: :unprocessable_entity
     else
-      render post.as_json(include: :user)
+      render json: post.as_json(include: :user), status: :created
     end
   end
 
@@ -16,19 +18,22 @@ class Api::PostsController < ApplicationController
     user = User.find(params[:user_id])
     Rating.create(rate_params) unless Rating.find_by(post:, user:)
     post.reload
-    render json: post.rating
+    render json: post.rating, status: :created
   end
 
   def top
-    posts = Post.top(params[:n])
-    render posts.as_json(only: %i[id title body])
+    render json: Post.top(params[:n]).as_json(only: %i[id title body])
   end
 
   def ips
-    render Post.ips.to_json(only: %i[ip authors])
+    render json: Post.ips.to_json(only: %i[ip authors])
   end
 
   private
+
+  def user_params
+    params.permit(%i[login])
+  end
 
   def post_params
     params.permit(%i[title body ip])

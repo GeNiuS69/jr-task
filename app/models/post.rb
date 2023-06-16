@@ -18,7 +18,7 @@ class Post < ApplicationRecord
 
   validates :title, :body, :ip, presence: true
 
-  def self.top(n = 5)
+  def self.top(n = 3)
     select('posts.*, AVG(ratings.value) AS rating')
       .joins('LEFT JOIN ratings ON posts.id = ratings.post_id')
       .group('posts.id')
@@ -27,10 +27,10 @@ class Post < ApplicationRecord
   end
 
   def self.ips
-    select('posts.ip, ARRAY_AGG(users.login) AS authors')
+    select('posts.ip, ARRAY_AGG(DISTINCT users.login) AS authors')
       .joins(:user)
       .group('posts.ip')
-      .having('COUNT(*) > 1')
+      .having('COUNT(DISTINCT users.login) > 1')
   end
 
   def rating
